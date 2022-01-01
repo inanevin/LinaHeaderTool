@@ -38,14 +38,18 @@ Timestamp: 12/14/2021 2:03:29 PM
 
 #ifndef HeaderTool_HPP
 #define HeaderTool_HPP
-
+#include <string>
 
 namespace Lina
 {
     class HeaderTool
-	{
-		
-	}
+    {
+    public:
+        HeaderTool()  = default;
+        ~HeaderTool() = default;
+        void Run(const std::string& path);
+        void ReadHPP(const std::string& hpp);
+    };
 } // namespace Lina
 
 #endif

@@ -27,9 +27,99 @@ SOFTWARE.
 */
 
 #include "HeaderTool.hpp"
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <stdio.h>
+#include <filesystem>
+
+int main(int argc, char** argv)
+{
+    Lina::HeaderTool tool;
+    tool.Run("../../");
+    return 0;
+}
 
 
 namespace Lina
 {
-	
+
+    std::vector<std::string> excludePaths 
+    {
+        ".vs",
+        ".git",
+        "build",
+        "CMake",
+        "Docs",
+        "vendor",
+        "VSItem",
+        ".clang",
+        ".travis",
+        "LICENSE",
+        "README",
+        ".sln",
+    };
+
+    void HeaderTool::ReadHPP(const std::string& hpp)
+    {
+        std::ifstream file;
+        file.open(hpp);
+        std::stringstream ss;
+        std::string       line;
+
+        if (file.is_open())
+        {
+            while (file.good())
+            {
+                getline(file, line);
+
+                std::cout << line << "\n";
+            }
+        }
+    }
+    
+	void HeaderTool::Run(const std::string& path)
+    {
+        std::cout << "Scanning folder " << path << std::endl;
+
+        for (const auto& entry : std::filesystem::directory_iterator(path))
+        {
+            if (entry.path().has_extension())
+            {
+                const std::string fullName = entry.path().filename().string();
+                const std::string extension = fullName.substr(fullName.find(".") + 1);;
+
+                if (extension.compare("hpp") == 0)
+                {
+                    std::cout << entry.path().string() << "\n";
+                    ReadHPP(entry.path().string());
+
+                }
+            }
+            else
+            {
+
+                std::string replacedPath = entry.path().string();
+                std::cout << "Scanning subs " << replacedPath << std::endl;
+
+                bool shouldExclude = false;
+                for (auto& excludeStr : excludePaths)
+                {
+                    if (replacedPath.find(excludeStr) != std::string::npos)
+                    {
+                        shouldExclude = true;
+                        break;
+                    }
+                }
+                
+                if (!shouldExclude)
+                {
+                    std::replace(replacedPath.begin(), replacedPath.end(), '\\', '/');
+                    Run(replacedPath);
+                }
+       
+            }
+        }
+    }
 }
+

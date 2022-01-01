@@ -13,7 +13,7 @@
 # and limitations under the License.
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 cmake_minimum_required (VERSION 3.6)
-project(HeaderTool)
+project(LinaHeader)
 
 #--------------------------------------------------------------------
 # Set sources
@@ -42,7 +42,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES UNITY_BUILD_MODE BATCH UNITY_BU
 # Options & Definitions
 #--------------------------------------------------------------------
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/include)
-
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
 
 #--------------------------------------------------------------------
