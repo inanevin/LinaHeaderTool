@@ -39,22 +39,59 @@ Timestamp: 12/14/2021 2:03:29 PM
 #ifndef HeaderTool_HPP
 #define HeaderTool_HPP
 #include <string>
+#include <unordered_map>
 
 namespace Lina
 {
+    struct LinaProperty
+    {
+        std::string m_title        = "";
+        std::string m_type         = "";
+        std::string m_tooltip      = "";
+        std::string m_dependsOn    = "";
+        std::string m_propertyName = "";
+    };
+
+    struct LinaClass
+    {
+        bool                      m_isStruct             = false;
+        std::string               m_name                 = "";
+        std::string               m_nameWithNamespace    = "";
+        std::string               m_title                = "";
+        std::string               m_icon                 = "";
+        std::string               m_category             = "";
+        bool                      m_canAddComponent      = false;
+        bool                      m_listenToValueChanged = false;
+        std::vector<LinaProperty> m_properties;
+    };
+
     class HeaderTool
     {
     public:
-        HeaderTool()  = default;
-        ~HeaderTool() = default;
+        HeaderTool() = default;
+        ~HeaderTool();
 
         void Run(const std::string& path);
         void ReadHPP(const std::string& hpp);
         void RemoveWordFromLine(std::string& line, const std::string& word);
         void ProcessPropertyMacro(const std::string& line);
+        void ProcessClassMacro(const std::string& line);
         void RemoveWhitespaces(std::string& str);
-        void RemoveCommas(std::string& str);
+        void RemoveComma(std::string& str);
+        void RemoveString(std::string& str, const std::string& toErase);
+        void RemoveBrackets(std::string& str);
         void SerializeReadData();
+        void AddDataToCPP();
+
+    private:
+        std::unordered_map<std::string, LinaClass*>              m_classData;
+        std::unordered_map<std::string, std::vector<LinaClass*>> m_namespaceClassMap;
+        std::string                                              m_lastClass     = "";
+        std::string                                              m_lastNamespace = "";
+        LinaProperty                                             m_lastProperty;
+        LinaClass                                                m_lastClassData;
+        bool                                                     nextLineIsClass    = false;
+        bool                                                     nextLineIsProperty = false;
     };
 } // namespace Lina
 
