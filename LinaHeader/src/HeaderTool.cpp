@@ -49,10 +49,10 @@ namespace Lina
 
 #define LINA_CLASS_MACRO             "LINA_CLASS("
 #define LINA_PROPERTY_MACRO          "LINA_PROPERTY("
-#define FORWARD_DECL_BGN_IDENTIFIER  "//FWDECL_BEGIN"
-#define FORWARD_DECL_END_IDENTIFIER  "//FWDECL_END"
 #define REGISTER_FUNC_BGN_IDENTIFIER "//REGFUNC_BEGIN"
 #define REGISTER_FUNC_END_IDENTIFIER "//REGFUNC_END"
+#define INCLUDE_BGN_IDENTIFIER       "//INC_BEGIN"
+#define INCLUDE_END_IDENTIFIER       "//INC_END"
 
     std::vector<std::string> excludePaths{
         ".vs",
@@ -85,8 +85,15 @@ namespace Lina
                 const std::string fullName  = entry.path().filename().string();
                 const std::string extension = fullName.substr(fullName.find(".") + 1);
 
-                if (extension.compare("hpp") == 0 || extension.compare("h") == 0)
+                // Skip the property declaration file.
+                if (fullName.find("CommonReflection") == std::string::npos && extension.compare("hpp") == 0 || extension.compare("h") == 0)
+                {
+                    std::string       replacedPath = entry.path().string();
+                    std::replace(replacedPath.begin(), replacedPath.end(), '\\', '/');
+                    std::string include = replacedPath.substr(replacedPath.find("include"));
+                    m_lastHPPInclude = include.substr(include.find_first_of("/") + 1);
                     ReadHPP(entry.path().string());
+                }
             }
             else
             {
@@ -135,6 +142,7 @@ namespace Lina
                     nextLineIsClass                = false;
                     LinaClass* linaClass           = new LinaClass();
                     *linaClass                     = m_lastClassData;
+                    linaClass->m_hppInclude        = m_lastHPPInclude;
                     linaClass->m_isStruct          = isStruct;
                     linaClass->m_nameWithNamespace = m_lastNamespace + "::" + className;
                     linaClass->m_name              = className;
@@ -300,7 +308,7 @@ namespace Lina
         std::string   line;
         file.open(REGISTRY_CPP_PATH);
         bool                     registerFunctionFound = false;
-        bool                     fwdDeclFound          = false;
+        bool                     includeFound          = false;
         std::vector<std::string> fileContents;
 
         if (file.is_open())
@@ -319,43 +327,32 @@ namespace Lina
                         fileContents.push_back(line);
                     }
                 }
-                else if (fwdDeclFound)
+                else if (includeFound)
                 {
-                    if (line.find(FORWARD_DECL_END_IDENTIFIER) == std::string::npos)
+                    if (line.find(INCLUDE_END_IDENTIFIER) == std::string::npos)
                         continue;
                     else
                     {
-                        fwdDeclFound = false;
+                        includeFound = false;
                         fileContents.push_back(line);
                     }
                 }
                 else
                     fileContents.push_back(line);
 
-                if (line.find(FORWARD_DECL_BGN_IDENTIFIER) != std::string::npos)
+                if (line.find(INCLUDE_BGN_IDENTIFIER) != std::string::npos)
                 {
-                    fwdDeclFound = true;
-                    for (auto& [nsName, classData] : m_namespaceClassMap)
-                    {
-                        fileContents.push_back("namespace " + nsName);
-                        fileContents.push_back("{");
+                    includeFound = true;
 
-                        for (auto* cd : classData)
-                        {
-                            if (cd->m_isStruct)
-                                fileContents.push_back("struct " + cd->m_name + ";");
-                            else
-                                fileContents.push_back("class " + cd->m_name + ";");
-                        }
-                        fileContents.push_back("}");
-                    }
+                    for (auto& [actualName, classData] : m_classData)
+                        fileContents.push_back("#include \"" + classData->m_hppInclude + "\"");
                 }
                 else if (line.find(REGISTER_FUNC_BGN_IDENTIFIER) != std::string::npos)
                 {
                     registerFunctionFound = true;
                     for (auto& [actualName, classData] : m_classData)
                     {
-                        const std::string className = classData->m_nameWithNamespace;
+                        const std::string        className = classData->m_nameWithNamespace;
                         std::vector<std::string> functionCommands;
                         functionCommands.push_back("entt::meta<" + className + ">().func<&REF_CloneComponent<" + className + ">, entt::as_void_t>(\"clone\"_hs);");
                         functionCommands.push_back("entt::meta<" + className + ">().func<&REF_SerializeComponent<" + className + ">, entt::as_void_t>(\"serialize\"_hs);");
@@ -374,8 +371,8 @@ namespace Lina
                         if (classData->m_listenToValueChanged)
                             functionCommands.push_back("entt::meta<" + className + ">().func<&REF_ValueChanged<" + className + ">, entt::as_void_t>(\"add\"_hs);");
 
-                        fileContents.push_back("entt::meta<" + className + ">().type().props(std::make_pair(\"Title\"_hs," + classData->m_title + "), std::make_pair(\"Icon\"_hs," + classData->m_icon + "), std::make_pair(\"Category\"_hs," + classData->m_category + "));");
-                        
+                        fileContents.push_back("entt::meta<" + className + ">().type().props(std::make_pair(\"Title\"_hs, \"" + classData->m_title + "\"), std::make_pair(\"Icon\"_hs,\"" + classData->m_icon + "\"), std::make_pair(\"Category\"_hs,\"" + classData->m_category + "\"));");
+
                         for (auto& property : classData->m_properties)
                         {
                             const std::string propRegister = "entt::meta<" + className + ">().data<&" + className + "::" + property.m_propertyName + ">(\"" + property.m_propertyName + "\"_hs)";

@@ -55,6 +55,7 @@ namespace Lina
     struct LinaClass
     {
         bool                      m_isStruct             = false;
+        std::string               m_hppInclude           = "";
         std::string               m_name                 = "";
         std::string               m_nameWithNamespace    = "";
         std::string               m_title                = "";
@@ -86,8 +87,9 @@ namespace Lina
     private:
         std::unordered_map<std::string, LinaClass*>              m_classData;
         std::unordered_map<std::string, std::vector<LinaClass*>> m_namespaceClassMap;
-        std::string                                              m_lastClass     = "";
-        std::string                                              m_lastNamespace = "";
+        std::string                                              m_lastClass      = "";
+        std::string                                              m_lastNamespace  = "";
+        std::string                                              m_lastHPPInclude = "";
         LinaProperty                                             m_lastProperty;
         LinaClass                                                m_lastClassData;
         bool                                                     nextLineIsClass    = false;

@@ -46,17 +46,14 @@ SOFTWARE.
 /// *
 /// *****************************************************************************
 /// </summary>
+
+//INC_BEGIN - !! DO NOT MODIFY THIS LINE !!
+#include "Depth1/Depth2/Test.hpp"
+//INC_END - !! DO NOT MODIFY THIS LINE !!
+
 namespace Lina
 {
     using namespace entt::literals;
-
-    //FWDECL_BEGIN - !DO NOT CHANGE THIS LINE!
-namespace ECS
-{
-struct EntityDataComponent;
-struct PhysicsComponent;
-}
-    //FWDECL_END - !DO NOT CHANGE THIS LINE!
 
     template <typename Type>
     void REF_CloneComponent(ECS::Entity from, ECS::Entity to)
@@ -123,6 +120,7 @@ struct PhysicsComponent;
         ECS::Registry::Get()->template remove<Type>(entity);
     }
 
+    template<typename Type>
     void REF_Copy(ECS::Entity entity, TypeID tid)
     {
     }
@@ -141,22 +139,7 @@ struct PhysicsComponent;
     void ReflectionRegistry::RegisterReflectedComponents()
     {
         //REGFUNC_BEGIN - !! DO NOT CHANGE THIS LINE !!
-entt::meta<ECS::PhysicsComponent>().type().props(std::make_pair("Title"_hs,PhysicsComponent), std::make_pair("Icon"_hs,ICON_FA_MESH), std::make_pair("Category"_hs,Physics));
-entt::meta<ECS::PhysicsComponent>().data<&ECS::PhysicsComponent::b>("b"_hs).props(std::make_pair("Title"_hs,"sa"),std::make_pair("Type"_hs,"as"),std::make_pair("Tooltip"_hs,"xd"),std::make_pair("Depends"_hs,"oh"));
-entt::meta<ECS::PhysicsComponent>().data<&ECS::PhysicsComponent::m_simType>("m_simType"_hs).props(std::make_pair("Title"_hs,"test"),std::make_pair("Type"_hs,"hey"),std::make_pair("Tooltip"_hs,"hebele"),std::make_pair("Depends"_hs,"hübele"));
-entt::meta<ECS::PhysicsComponent>().func<&REF_CloneComponent<ECS::PhysicsComponent>, entt::as_void_t>("clone"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_SerializeComponent<ECS::PhysicsComponent>, entt::as_void_t>("serialize"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_DeserializeComponent<ECS::PhysicsComponent>, entt::as_void_t>("deserialize"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_SetEnabled<ECS::PhysicsComponent>, entt::as_void_t>("setEnabled"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Get<ECS::PhysicsComponent>, entt::as_ref_t>("get"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Reset<ECS::PhysicsComponent>, entt::as_void_t>("reset"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Has<ECS::PhysicsComponent>, entt::as_void_t>("has"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Remove<ECS::PhysicsComponent>, entt::as_void_t>("remove"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Copy<ECS::PhysicsComponent>, entt::as_void_t>("copy"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Paste<ECS::PhysicsComponent>, entt::as_void_t>("paste"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_Add<ECS::PhysicsComponent>, entt::as_void_t>("add"_hs);
-entt::meta<ECS::PhysicsComponent>().func<&REF_ValueChanged<ECS::PhysicsComponent>, entt::as_void_t>("add"_hs);
-entt::meta<ECS::EntityDataComponent>().type().props(std::make_pair("Title"_hs,EntityDataComponent), std::make_pair("Icon"_hs,ICON_FA_MESH), std::make_pair("Category"_hs,Data));
+entt::meta<ECS::EntityDataComponent>().type().props(std::make_pair("Title"_hs, "EntityDataComponent"), std::make_pair("Icon"_hs,"ICON_FA_MESH"), std::make_pair("Category"_hs,"Data"));
 entt::meta<ECS::EntityDataComponent>().func<&REF_CloneComponent<ECS::EntityDataComponent>, entt::as_void_t>("clone"_hs);
 entt::meta<ECS::EntityDataComponent>().func<&REF_SerializeComponent<ECS::EntityDataComponent>, entt::as_void_t>("serialize"_hs);
 entt::meta<ECS::EntityDataComponent>().func<&REF_DeserializeComponent<ECS::EntityDataComponent>, entt::as_void_t>("deserialize"_hs);
@@ -171,6 +154,12 @@ entt::meta<ECS::EntityDataComponent>().func<&REF_ValueChanged<ECS::EntityDataCom
         //REGFUNC_END - !! DO NOT CHANGE THIS LINE !!
     }
 } // namespace Lina
+
+
+
+
+
+
 
 
 
