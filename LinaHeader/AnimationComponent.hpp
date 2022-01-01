@@ -27,35 +27,40 @@ SOFTWARE.
 */
 
 /*
-Class: HeaderTool
+Class: AnimationComponent
 
 
 
-Timestamp: 12/14/2021 2:03:29 PM
+Timestamp: 12/7/2021 4:13:25 PM
 */
 
 #pragma once
 
-#ifndef HeaderTool_HPP
-#define HeaderTool_HPP
+#ifndef AnimationComponent_HPP
+#define AnimationComponent_HPP
+
+// Headers here.
+#include "ECS/Component.hpp"
+
 #include <string>
 
-namespace Lina
+namespace Lina::ECS
 {
-    class HeaderTool
+	LINA_CLASS()
+    struct AnimationComponent : public Component
     {
-    public:
-        HeaderTool()  = default;
-        ~HeaderTool() = default;
-
-        void Run(const std::string& path);
-        void ReadHPP(const std::string& hpp);
-        void RemoveWordFromLine(std::string& line, const std::string& word);
-        void ProcessPropertyMacro(const std::string& line);
-        void RemoveWhitespaces(std::string& str);
-        void RemoveCommas(std::string& str);
-        void SerializeReadData();
+		LINA_PROPERTY("AnimName", "string", "this is a test", "")
+        std::string m_animationName;
+		
+		LINA_PROPERTY("AnimName", "string", "this is a test", "")
+        const std::string m_animationName2;
+		
+		LINA_PROPERTY("OtherVal", "int", "meh", "m_animationName")
+		int other = 5;
+		
+		LINA_PROPERTY("const test", "bool", "hebe", "")
+		const bool other = false;
     };
-} // namespace Lina
+} // namespace Lina::ECS
 
 #endif
