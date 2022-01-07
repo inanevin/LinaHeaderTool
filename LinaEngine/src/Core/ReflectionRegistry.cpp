@@ -48,6 +48,10 @@ SOFTWARE.
 /// </summary>
 
 //INC_BEGIN - !! DO NOT MODIFY THIS LINE !!
+#include "Depth1/Depth2/Test2.hpp"
+#include "Depth1/Depth2/Test2.hpp"
+#include "Depth1/Depth2/Test2.hpp"
+#include "Depth1/Depth2/Test2.hpp"
 #include "Depth1/Depth2/Test.hpp"
 //INC_END - !! DO NOT MODIFY THIS LINE !!
 
@@ -139,21 +143,114 @@ namespace Lina
     void ReflectionRegistry::RegisterReflectedComponents()
     {
         //REGFUNC_BEGIN - !! DO NOT CHANGE THIS LINE !!
-entt::meta<ECS::EntityDataComponent>().type().props(std::make_pair("Title"_hs, "EntityDataComponent"), std::make_pair("Icon"_hs,"ICON_FA_MESH"), std::make_pair("Category"_hs,"Data"));
-entt::meta<ECS::EntityDataComponent>().func<&REF_CloneComponent<ECS::EntityDataComponent>, entt::as_void_t>("clone"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_SerializeComponent<ECS::EntityDataComponent>, entt::as_void_t>("serialize"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_DeserializeComponent<ECS::EntityDataComponent>, entt::as_void_t>("deserialize"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_SetEnabled<ECS::EntityDataComponent>, entt::as_void_t>("setEnabled"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_Get<ECS::EntityDataComponent>, entt::as_ref_t>("get"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_Reset<ECS::EntityDataComponent>, entt::as_void_t>("reset"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_Has<ECS::EntityDataComponent>, entt::as_void_t>("has"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_Remove<ECS::EntityDataComponent>, entt::as_void_t>("remove"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_Copy<ECS::EntityDataComponent>, entt::as_void_t>("copy"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_Paste<ECS::EntityDataComponent>, entt::as_void_t>("paste"_hs);
-entt::meta<ECS::EntityDataComponent>().func<&REF_ValueChanged<ECS::EntityDataComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::SpotLightComponent>().type().props(std::make_pair("Title"_hs, "Spot Light Component"), std::make_pair("Icon"_hs,ICON_FA_EYE), std::make_pair("Category"_hs,"Lights"));
+entt::meta<ECS::SpotLightComponent>().data<&ECS::SpotLightComponent::m_isEnabled>("m_isEnabled"_hs);
+entt::meta<ECS::SpotLightComponent>().data<&ECS::SpotLightComponent::m_distance>("m_distance"_hs).props(std::make_pair("Title"_hs,"Distance"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,"Light Distance"),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::SpotLightComponent>().data<&ECS::SpotLightComponent::m_cutoff>("m_cutoff"_hs).props(std::make_pair("Title"_hs,"Cutoff"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,"The light will gradually dim from the edges of the cone defined by the Cutoff, to the cone defined by the Outer Cutoff."),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::SpotLightComponent>().data<&ECS::SpotLightComponent::m_outerCutoff>("m_outerCutoff"_hs).props(std::make_pair("Title"_hs,"Outer Cutoff"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,"The light will gradually dim from the edges of the cone defined by the Cutoff, to the cone defined by the Outer Cutoff."),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::SpotLightComponent>().func<&REF_CloneComponent<ECS::SpotLightComponent>, entt::as_void_t>("clone"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_SerializeComponent<ECS::SpotLightComponent>, entt::as_void_t>("serialize"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_DeserializeComponent<ECS::SpotLightComponent>, entt::as_void_t>("deserialize"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_SetEnabled<ECS::SpotLightComponent>, entt::as_void_t>("setEnabled"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Get<ECS::SpotLightComponent>, entt::as_ref_t>("get"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Reset<ECS::SpotLightComponent>, entt::as_void_t>("reset"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Has<ECS::SpotLightComponent>, entt::as_void_t>("has"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Remove<ECS::SpotLightComponent>, entt::as_void_t>("remove"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Copy<ECS::SpotLightComponent>, entt::as_void_t>("copy"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Paste<ECS::SpotLightComponent>, entt::as_void_t>("paste"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_Add<ECS::SpotLightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::SpotLightComponent>().func<&REF_ValueChanged<ECS::SpotLightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::LightComponent>().type().props(std::make_pair("Title"_hs, "Light Component"), std::make_pair("Icon"_hs,ICON_FA_EYE), std::make_pair("Category"_hs,"Lights"));
+entt::meta<ECS::LightComponent>().data<&ECS::LightComponent::m_isEnabled>("m_isEnabled"_hs);
+entt::meta<ECS::LightComponent>().data<&ECS::LightComponent::m_color>("m_color"_hs).props(std::make_pair("Title"_hs,"Color"),std::make_pair("Type"_hs,"Color"),std::make_pair("Tooltip"_hs,""),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::LightComponent>().data<&ECS::LightComponent::m_intensity>("m_intensity"_hs).props(std::make_pair("Title"_hs,"Intensity"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,""),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::LightComponent>().data<&ECS::LightComponent::m_drawDebug>("m_drawDebug"_hs).props(std::make_pair("Title"_hs,"Draw Debug"),std::make_pair("Type"_hs,"Bool"),std::make_pair("Tooltip"_hs,"Enables debug drawing for this component."),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::LightComponent>().data<&ECS::LightComponent::m_castsShadows>("m_castsShadows"_hs).props(std::make_pair("Title"_hs,"Cast Shadows"),std::make_pair("Type"_hs,"Bool"),std::make_pair("Tooltip"_hs,"Enables dynamic shadow casting for this light."),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::LightComponent>().func<&REF_CloneComponent<ECS::LightComponent>, entt::as_void_t>("clone"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_SerializeComponent<ECS::LightComponent>, entt::as_void_t>("serialize"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_DeserializeComponent<ECS::LightComponent>, entt::as_void_t>("deserialize"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_SetEnabled<ECS::LightComponent>, entt::as_void_t>("setEnabled"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Get<ECS::LightComponent>, entt::as_ref_t>("get"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Reset<ECS::LightComponent>, entt::as_void_t>("reset"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Has<ECS::LightComponent>, entt::as_void_t>("has"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Remove<ECS::LightComponent>, entt::as_void_t>("remove"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Copy<ECS::LightComponent>, entt::as_void_t>("copy"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Paste<ECS::LightComponent>, entt::as_void_t>("paste"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_Add<ECS::LightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::LightComponent>().func<&REF_ValueChanged<ECS::LightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::PointLightComponent>().type().props(std::make_pair("Title"_hs, "Point Light Component"), std::make_pair("Icon"_hs,ICON_FA_EYE), std::make_pair("Category"_hs,"Lights"));
+entt::meta<ECS::PointLightComponent>().data<&ECS::PointLightComponent::m_isEnabled>("m_isEnabled"_hs);
+entt::meta<ECS::PointLightComponent>().data<&ECS::PointLightComponent::m_distance>("m_distance"_hs).props(std::make_pair("Title"_hs,"Distance"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,"Light Distance"),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::PointLightComponent>().data<&ECS::PointLightComponent::m_bias>("m_bias"_hs).props(std::make_pair("Title"_hs,"Bias"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,"Defines the shadow crispiness."),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::PointLightComponent>().data<&ECS::PointLightComponent::m_shadowNear>("m_shadowNear"_hs).props(std::make_pair("Title"_hs,"Shadow Near"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,""),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::PointLightComponent>().data<&ECS::PointLightComponent::m_shadowFar>("m_shadowFar"_hs).props(std::make_pair("Title"_hs,"Shadow Far"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,""),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::PointLightComponent>().func<&REF_CloneComponent<ECS::PointLightComponent>, entt::as_void_t>("clone"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_SerializeComponent<ECS::PointLightComponent>, entt::as_void_t>("serialize"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_DeserializeComponent<ECS::PointLightComponent>, entt::as_void_t>("deserialize"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_SetEnabled<ECS::PointLightComponent>, entt::as_void_t>("setEnabled"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Get<ECS::PointLightComponent>, entt::as_ref_t>("get"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Reset<ECS::PointLightComponent>, entt::as_void_t>("reset"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Has<ECS::PointLightComponent>, entt::as_void_t>("has"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Remove<ECS::PointLightComponent>, entt::as_void_t>("remove"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Copy<ECS::PointLightComponent>, entt::as_void_t>("copy"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Paste<ECS::PointLightComponent>, entt::as_void_t>("paste"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_Add<ECS::PointLightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::PointLightComponent>().func<&REF_ValueChanged<ECS::PointLightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::DirectionalLightComponent>().type().props(std::make_pair("Title"_hs, "Directional Light Component"), std::make_pair("Icon"_hs,ICON_FA_EYE), std::make_pair("Category"_hs,"Lights"));
+entt::meta<ECS::DirectionalLightComponent>().data<&ECS::DirectionalLightComponent::m_isEnabled>("m_isEnabled"_hs);
+entt::meta<ECS::DirectionalLightComponent>().data<&ECS::DirectionalLightComponent::m_shadowOrthoProjection>("m_shadowOrthoProjection"_hs).props(std::make_pair("Title"_hs,"Projection"),std::make_pair("Type"_hs,"Vector4"),std::make_pair("Tooltip"_hs,"Defines shadow projection boundaries."),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::DirectionalLightComponent>().data<&ECS::DirectionalLightComponent::m_shadowZNear>("m_shadowZNear"_hs).props(std::make_pair("Title"_hs,"Shadow Near"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,""),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::DirectionalLightComponent>().data<&ECS::DirectionalLightComponent::m_shadowZFar>("m_shadowZFar"_hs).props(std::make_pair("Title"_hs,"Shadow Far"),std::make_pair("Type"_hs,"Float"),std::make_pair("Tooltip"_hs,""),std::make_pair("Depends"_hs,""_hs));
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_CloneComponent<ECS::DirectionalLightComponent>, entt::as_void_t>("clone"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_SerializeComponent<ECS::DirectionalLightComponent>, entt::as_void_t>("serialize"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_DeserializeComponent<ECS::DirectionalLightComponent>, entt::as_void_t>("deserialize"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_SetEnabled<ECS::DirectionalLightComponent>, entt::as_void_t>("setEnabled"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Get<ECS::DirectionalLightComponent>, entt::as_ref_t>("get"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Reset<ECS::DirectionalLightComponent>, entt::as_void_t>("reset"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Has<ECS::DirectionalLightComponent>, entt::as_void_t>("has"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Remove<ECS::DirectionalLightComponent>, entt::as_void_t>("remove"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Copy<ECS::DirectionalLightComponent>, entt::as_void_t>("copy"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Paste<ECS::DirectionalLightComponent>, entt::as_void_t>("paste"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_Add<ECS::DirectionalLightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::DirectionalLightComponent>().func<&REF_ValueChanged<ECS::DirectionalLightComponent>, entt::as_void_t>("add"_hs);
+entt::meta<ECS::EntityDataComponent>().type().props("Title"_hs, "Entity Data Component");
         //REGFUNC_END - !! DO NOT CHANGE THIS LINE !!
     }
 } // namespace Lina
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -52,9 +52,8 @@ namespace Lina
         std::string m_propertyName = "";
     };
 
-    struct LinaClass
+    struct LinaComponent
     {
-        bool                      m_isStruct             = false;
         std::string               m_hppInclude           = "";
         std::string               m_name                 = "";
         std::string               m_nameWithNamespace    = "";
@@ -63,6 +62,15 @@ namespace Lina
         std::string               m_category             = "";
         bool                      m_canAddComponent      = false;
         bool                      m_listenToValueChanged = false;
+        std::vector<LinaProperty> m_properties;
+    };
+
+    struct LinaClass
+    {
+        std::string               m_hppInclude        = "";
+        std::string               m_name              = "";
+        std::string               m_nameWithNamespace = "";
+        std::string               m_title             = "";
         std::vector<LinaProperty> m_properties;
     };
 
@@ -76,24 +84,31 @@ namespace Lina
         void ReadHPP(const std::string& hpp);
         void RemoveWordFromLine(std::string& line, const std::string& word);
         void ProcessPropertyMacro(const std::string& line);
+        void ProcessComponentMacro(const std::string& line);
         void ProcessClassMacro(const std::string& line);
         void RemoveWhitespaces(std::string& str);
+        void RemoveWhitespacesPreAndPost(std::string& str);
         void RemoveComma(std::string& str);
+        void RemoveDoubleQuote(std::string& str);
         void RemoveString(std::string& str, const std::string& toErase);
         void RemoveBrackets(std::string& str);
         void SerializeReadData();
-        void AddDataToCPP();
 
     private:
-        std::unordered_map<std::string, LinaClass*>              m_classData;
-        std::unordered_map<std::string, std::vector<LinaClass*>> m_namespaceClassMap;
-        std::string                                              m_lastClass      = "";
-        std::string                                              m_lastNamespace  = "";
-        std::string                                              m_lastHPPInclude = "";
-        LinaProperty                                             m_lastProperty;
-        LinaClass                                                m_lastClassData;
-        bool                                                     nextLineIsClass    = false;
-        bool                                                     nextLineIsProperty = false;
+        std::unordered_map<std::string, LinaComponent*>              m_componentData;
+        std::unordered_map<std::string, LinaClass*>                  m_classData;
+        std::unordered_map<std::string, std::vector<LinaComponent*>> m_namespaceComponentMap;
+        std::unordered_map<std::string, std::vector<LinaClass*>>     m_namespaceClassMap;
+        std::string                                                  m_lastClass      = "";
+        std::string                                                  m_lastNamespace  = "";
+        std::string                                                  m_lastHPPInclude = "";
+        LinaProperty                                                 m_lastProperty;
+        LinaComponent                                                m_lastComponentData;
+        LinaClass                                                    m_lastClassData;
+        bool                                                         nextLineIsComponent      = false;
+        bool                                                         nextLineIsClass          = false;
+        bool                                                         nextLineIsProperty       = false;
+        bool                                                         m_lastHeaderWasComponent = false;
     };
 } // namespace Lina
 
