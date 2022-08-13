@@ -1,4 +1,4 @@
-![Lina](Docs/Images/linalogofull_medium.png)
+![Lina](https://user-images.githubusercontent.com/62678643/184497323-6333c592-31dc-4ccf-8b6d-afefe9f051aa.png)
 
 ## Lina Header Tool
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
@@ -10,6 +10,3 @@ Lina Header Tool is a C++ console program inspired by Epic's Unreal Header tool.
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
 Check out [Licence](LICENSE) file.
-
-
-
