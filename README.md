@@ -1,4 +1,4 @@
-![Lina](https://user-images.githubusercontent.com/62678643/184497323-6333c592-31dc-4ccf-8b6d-afefe9f051aa.png)
+![Lina](https://user-images.githubusercontent.com/62678643/184518850-8fb39a84-fb0b-471d-990e-3fadf2057965.svg)
 
 ## Lina Header Tool
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
