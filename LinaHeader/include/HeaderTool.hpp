@@ -49,19 +49,17 @@ namespace Lina
         std::string m_type         = "";
         std::string m_tooltip      = "";
         std::string m_dependsOn    = "";
+        std::string m_category     = "";
         std::string m_propertyName = "";
     };
 
     struct LinaComponent
     {
-        std::string               m_hppInclude           = "";
-        std::string               m_name                 = "";
-        std::string               m_nameWithNamespace    = "";
-        std::string               m_title                = "";
-        std::string               m_icon                 = "";
-        std::string               m_category             = "";
-        bool                      m_canAddComponent      = false;
-        bool                      m_listenToValueChanged = false;
+        std::string               m_hppInclude        = "";
+        std::string               m_name              = "";
+        std::string               m_nameWithNamespace = "";
+        std::string               m_title             = "";
+        std::string               m_category          = "";
         std::vector<LinaProperty> m_properties;
     };
 

@@ -33,8 +33,10 @@ SOFTWARE.
 #include <stdio.h>
 #include <filesystem>
 
-#define ROOT_PATH         "../../"
-#define REGISTRY_CPP_PATH "../../LinaEngine/src/Core/ReflectionRegistry.cpp"
+ #define ROOT_PATH         "../../../.."
+ #define REGISTRY_CPP_PATH "../../../../Sandbox/src/Lina/ReflectionRegistry.cpp"
+// #define ROOT_PATH         "../../"
+// #define REGISTRY_CPP_PATH "../../Sandbox/src/Lina/ReflectionRegistry.cpp"
 
 int main(int argc, char** argv)
 {
@@ -49,13 +51,16 @@ namespace Lina
 
 #define LINA_CLASS_MACRO             "LINA_CLASS("
 #define LINA_COMPONENT_MACRO         "LINA_COMPONENT("
-#define LINA_PROPERTY_MACRO          "LINA_PROPERTY("
+#define LINA_PROPERTY_MACRO          "LINA_FIELD("
 #define REGISTER_FUNC_BGN_IDENTIFIER "//REGFUNC_BEGIN"
 #define REGISTER_FUNC_END_IDENTIFIER "//REGFUNC_END"
 #define INCLUDE_BGN_IDENTIFIER       "//INC_BEGIN"
 #define INCLUDE_END_IDENTIFIER       "//INC_END"
 
     std::vector<std::string> excludePaths{
+        "_Dependencies",
+        "LinaEditor_old",
+        "LinaGraphics_old",
         ".vs",
         ".git",
         "build",
@@ -126,12 +131,17 @@ namespace Lina
         file.open(hpp);
         std::string line;
 
+        m_lastClass = "";
         // Read the hpp line by line, find LINA_CLASS and LINA_PROPERTY macros.
         if (file.is_open())
         {
             while (file.good())
             {
                 getline(file, line);
+
+                if (line.find("//") != std::string::npos)
+                    continue;
+
                 if (nextLineIsComponent)
                 {
                     std::string componentName = line.substr(0, line.find(":"));
@@ -209,7 +219,7 @@ namespace Lina
                         ProcessComponentMacro(line);
                         nextLineIsComponent = true;
                     }
-                    else if (line.find(LINA_PROPERTY_MACRO) != std::string::npos)
+                    else if (line.find(LINA_PROPERTY_MACRO) != std::string::npos && (m_lastClass.compare("") != 0))
                     {
                         ProcessPropertyMacro(line);
                         nextLineIsProperty = true;
@@ -241,34 +251,14 @@ namespace Lina
         {
             line.erase(n, word.length());
         }
+
+        const std::string t  = "\t";
+        auto              n2 = line.find(t);
+        if (n2 != std::string::npos)
+            line.erase(n2, t.length());
     }
 
     void HeaderTool::ProcessPropertyMacro(const std::string& line)
-    {
-        std::string trimmed           = line.substr(line.find("(") + 1);
-        std::string insideParanthesis = trimmed.substr(0, trimmed.find(")"));
-
-        const int itemCount = 4;
-        for (int i = 0; i < itemCount; i++)
-        {
-            const size_t                               firstQuote = insideParanthesis.find("\"");
-            const size_t                                secondQuote = insideParanthesis.find("\"", firstQuote+1);
-            std::string property = insideParanthesis.substr(firstQuote + 1, secondQuote - 1 - firstQuote);
-            RemoveWhitespacesPreAndPost(property);
-            insideParanthesis = insideParanthesis.substr(secondQuote + 1);
-
-            if (i == 0)
-                m_lastProperty.m_title = property;
-            else if (i == 1)
-                m_lastProperty.m_type = property;
-            else if (i == 2)
-                m_lastProperty.m_tooltip = property;
-            else if (i == 3)
-                m_lastProperty.m_dependsOn = property;
-        }
-    }
-
-    void HeaderTool::ProcessComponentMacro(const std::string& line)
     {
         std::string trimmed           = line.substr(line.find("(") + 1);
         std::string insideParanthesis = trimmed.substr(0, trimmed.find(")"));
@@ -278,20 +268,41 @@ namespace Lina
         {
             const size_t firstQuote  = insideParanthesis.find("\"");
             const size_t secondQuote = insideParanthesis.find("\"", firstQuote + 1);
-            std::string  property    = insideParanthesis.substr(firstQuote + 1, secondQuote - 1 - firstQuote);
-            RemoveWhitespacesPreAndPost(property);
+            std::string  prop        = insideParanthesis.substr(firstQuote + 1, secondQuote - 1 - firstQuote);
+            RemoveWhitespacesPreAndPost(prop);
             insideParanthesis = insideParanthesis.substr(secondQuote + 1);
 
             if (i == 0)
-                m_lastComponentData.m_title = property;
+                m_lastProperty.m_title = prop;
             else if (i == 1)
-                m_lastComponentData.m_icon = property;
+                m_lastProperty.m_type = prop;
             else if (i == 2)
-                m_lastComponentData.m_category = property;
+                m_lastProperty.m_tooltip = prop;
             else if (i == 3)
-                m_lastComponentData.m_canAddComponent = property.compare("true") == 0 ? true : false;
+                m_lastProperty.m_dependsOn = prop;
             else if (i == 4)
-                m_lastComponentData.m_listenToValueChanged = property.compare("true") == 0 ? true : false;
+                m_lastProperty.m_category = prop;
+        }
+    }
+
+    void HeaderTool::ProcessComponentMacro(const std::string& line)
+    {
+        std::string trimmed           = line.substr(line.find("(") + 1);
+        std::string insideParanthesis = trimmed.substr(0, trimmed.find(")"));
+
+        const int itemCount = 2;
+        for (int i = 0; i < itemCount; i++)
+        {
+            const size_t firstQuote  = insideParanthesis.find("\"");
+            const size_t secondQuote = insideParanthesis.find("\"", firstQuote + 1);
+            std::string  prop        = insideParanthesis.substr(firstQuote + 1, secondQuote - 1 - firstQuote);
+            RemoveWhitespacesPreAndPost(prop);
+            insideParanthesis = insideParanthesis.substr(secondQuote + 1);
+
+            if (i == 0)
+                m_lastComponentData.m_title = prop;
+            else if (i == 1)
+                m_lastComponentData.m_category = prop;
         }
     }
 
@@ -417,35 +428,23 @@ namespace Lina
                     {
                         const std::string        className = componentData->m_nameWithNamespace;
                         std::vector<std::string> functionCommands;
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_CloneComponent<" + className + ">, entt::as_void_t>(\"clone\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_SerializeComponent<" + className + ">, entt::as_void_t>(\"serialize\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_DeserializeComponent<" + className + ">, entt::as_void_t>(\"deserialize\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_SetEnabled<" + className + ">, entt::as_void_t>(\"setEnabled\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Get<" + className + ">, entt::as_ref_t>(\"get\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Reset<" + className + ">, entt::as_void_t>(\"reset\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Has<" + className + ">, entt::as_void_t>(\"has\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Remove<" + className + ">, entt::as_void_t>(\"remove\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Copy<" + className + ">, entt::as_void_t>(\"copy\"_hs);");
-                        functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Paste<" + className + ">, entt::as_void_t>(\"paste\"_hs);");
 
-                        if (componentData->m_canAddComponent)
-                            functionCommands.push_back("entt::meta<" + className + ">().func<&REF_Add<" + className + ">, entt::as_void_t>(\"add\"_hs);");
-
-                        if (componentData->m_listenToValueChanged)
-                            functionCommands.push_back("entt::meta<" + className + ">().func<&REF_ValueChanged<" + className + ">, entt::as_void_t>(\"add\"_hs);");
-
-                        // Class meta.
-                        fileContents.push_back("entt::meta<" + className + ">().type().props(std::make_pair(\"Title\"_hs, \"" + componentData->m_title + "\"), std::make_pair(\"Icon\"_hs," + componentData->m_icon + "), std::make_pair(\"Category\"_hs,\"" + componentData->m_category + "\"));");
-
-                        // inherited m_isEnabled
-                        fileContents.push_back("entt::meta<" + className + ">().data<&" + className + "::" + "m_isEnabled" + ">(\"m_isEnabled\"_hs);");
+                        fileContents.push_back("Reflection::Meta<" + className + ">().AddProperty(\"Title\"_hs,\"" + componentData->m_title + "\");");
+                        fileContents.push_back("Reflection::Meta<" + className + ">().AddProperty(\"Category\"_hs,\"" + componentData->m_category + "\");");
 
                         for (auto& property : componentData->m_properties)
                         {
-                            const std::string propRegister = "entt::meta<" + className + ">().data<&" + className + "::" + property.m_propertyName + ">(\"" + property.m_propertyName + "\"_hs)";
-                            const std::string dataRegister = ".props(std::make_pair(\"Title\"_hs,\"" + property.m_title + "\")," + "std::make_pair(\"Type\"_hs,\"" + property.m_type + "\")," + "std::make_pair(\"Tooltip\"_hs,\"" + property.m_tooltip + "\")," + "std::make_pair(\"Depends\"_hs,\"" + property.m_dependsOn + "\"_hs));";
-                            fileContents.push_back(propRegister + dataRegister);
+                            fileContents.push_back("Reflection::Meta<" + className + ">().AddField<&" + className + "::" + property.m_propertyName + ", " + className + ">(\"" + property.m_propertyName + "\"_hs);");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Title\"_hs,\"" + property.m_title + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Type\"_hs,\"" + property.m_type + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Tooltip\"_hs,\"" + property.m_tooltip + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Depends On\"_hs,\"" + property.m_dependsOn + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Category\"_hs,\"" + property.m_category + "\");");
                         }
+
+                        functionCommands.push_back("Reflection::Meta<" + className + ">().createCompCacheFunc = std::bind(&REF_CreateComponentCacheFunc<" + className + ">);");
+                        functionCommands.push_back("Reflection::Meta<" + className + ">().createFunc = std::bind(&REF_CreateComponentFunc<" + className + ">);");
+                        functionCommands.push_back("Reflection::Meta<" + className + ">().destroyFunc = std::bind(&REF_DestroyComponentFunc<" + className + ">, std::placeholders::_1);");
 
                         for (auto& fc : functionCommands)
                             fileContents.push_back(fc);
@@ -454,12 +453,16 @@ namespace Lina
                     for (auto& [actualName, classData] : m_classData)
                     {
                         const std::string className = classData->m_nameWithNamespace;
-                        fileContents.push_back("entt::meta<" + className + ">().type().props(\"Title\"_hs, \"" + classData->m_title + "\");");
+                        fileContents.push_back("Reflection::Meta<" + className + ">().AddProperty(\"Title\"_hs,\"" + classData->m_title + "\");");
+
                         for (auto& property : classData->m_properties)
                         {
-                            const std::string propRegister = "entt::meta<" + className + ">().data<&" + className + "::" + property.m_propertyName + ">(\"" + property.m_propertyName + "\"_hs)";
-                            const std::string dataRegister = ".props(std::make_pair(\"Title\"_hs,\"" + property.m_title + "\")," + "std::make_pair(\"Type\"_hs,\"" + property.m_type + "\")," + "std::make_pair(\"Tooltip\"_hs,\"" + property.m_tooltip + "\")," + "std::make_pair(\"Depends\"_hs,\"" + property.m_dependsOn + "\"_hs));";
-                            fileContents.push_back(propRegister + dataRegister);
+                            fileContents.push_back("Reflection::Meta<" + className + ">().AddField<&" + className + "::" + property.m_propertyName + ", " + className + ">(\"" + property.m_propertyName + "\"_hs);");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Title\"_hs,\"" + property.m_title + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Type\"_hs,\"" + property.m_type + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Tooltip\"_hs,\"" + property.m_tooltip + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Depends On\"_hs,\"" + property.m_dependsOn + "\");");
+                            fileContents.push_back("Reflection::Meta<" + className + ">().GetField(\"" + property.m_propertyName + "\"_hs)->AddProperty(\"Category\"_hs,\"" + property.m_category + "\");");
                         }
                     }
                 }
@@ -471,7 +474,7 @@ namespace Lina
         std::ofstream newFile;
         newFile.open(REGISTRY_CPP_PATH, std::ofstream::out | std::ofstream::trunc);
 
-        for (int i = 0; i < fileContents.size(); i++)
+        for (int i = 0; i < fileContents.size() - 1; i++)
             newFile << fileContents[i] << std::endl;
         newFile.close();
     }
